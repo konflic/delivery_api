@@ -1,0 +1,7 @@
+Flask==1.1.2
+Flask-RESTful==0.3.8
+SQLAlchemy==1.4.2
+pydantic==1.8.1
+arrow==1.0.3
+pytest==6.2.2
+requests==2.25.1

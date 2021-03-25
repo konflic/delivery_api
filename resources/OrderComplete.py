@@ -1,13 +1,14 @@
 import arrow
 
 from flask_restful import Resource, request
-from controllers import complete_order
+from controller.controllers import complete_order
 
 
-class OrdersComplete(Resource):
+class OrderComplete(Resource):
 
     def post(self):
         data = request.json
+
         courier_id = data['courier_id']
         order_id = data['order_id']
         delivered_on = arrow.get(data['complete_time']).datetime.utcnow()

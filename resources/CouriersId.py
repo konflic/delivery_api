@@ -1,8 +1,7 @@
-from flask_restful import Resource
+from flask import make_response, abort
+from flask_restful import Resource, request
 
-from controllers import get_courier
-
-from models.OrderModel import OrderModel
+from controller.controllers import get_courier, update_courier, update_courier_orders
 
 
 class CouriersId(Resource):
@@ -22,5 +21,14 @@ class CouriersId(Resource):
         else:
             return {}, 404
 
-    def patch(self, data):
-        return {'hello': data}
+    def patch(self, courier_id):
+        data_to_change = request.json
+        expected_fields = ["regions", "courier_type", "working_hours"]
+
+        if not all([key in expected_fields for key in data_to_change.keys()]):
+            return abort(make_response({"validation_error": "wrong fields"}, 400))
+
+        courier = update_courier(courier_id, data_to_change)
+        update_courier_orders(courier)
+
+        return {'hello': 'test'}

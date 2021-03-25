@@ -1,4 +1,9 @@
 import pytest
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def pytest_addoption(parser):
@@ -8,3 +13,8 @@ def pytest_addoption(parser):
 @pytest.fixture
 def base_url(request):
     return request.config.getoption("--url")
+
+
+@pytest.fixture
+def test_database():
+    os.remove("")

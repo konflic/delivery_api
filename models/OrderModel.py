@@ -1,5 +1,5 @@
 from typing import List
-from pydantic import BaseModel, StrictStr, StrictInt, StrictFloat, Field
+from pydantic import BaseModel, StrictStr, StrictInt, Field
 
 
 class OrderModel(BaseModel):

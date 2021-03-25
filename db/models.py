@@ -33,6 +33,10 @@ class Courier(Base):
     def get_earnings(self):
         return sum(tuple(item.amount for item in self.earnings))
 
+    @staticmethod
+    def get_courier(courier_id):
+        return Courier.query.filter(Courier.courier_id == courier_id).first()
+
     @property
     def available_weight(self):
         return self.max_weight - self.weight_taken
@@ -110,8 +114,9 @@ class DeliveredOrder(Base):
             func.avg(DeliveredOrder.delivery_time)
         ).filter(DeliveredOrder.region_id == region_id).one()[0]
 
-    def get_all_regions(self):
-        return set(el[0] for el in self.query.values(DeliveredOrder.region_id))
+    @staticmethod
+    def get_all_regions():
+        return set(el[0] for el in DeliveredOrder.query.values(DeliveredOrder.region_id))
 
     def get_avg_for_regions(self):
         for region in self.get_all_regions():
@@ -132,6 +137,10 @@ class Region(Base):
     courier_id = Column(Integer, ForeignKey("couriers.courier_id"))
     region_id = Column(Integer, nullable=False)
 
+    @staticmethod
+    def clear_courier_regions(courier_id):
+        Region.query.filter(Region.courier_id == courier_id).delete()
+
     def __init__(self, courier_id, region_id):
         self.courier_id = courier_id
         self.region_id = region_id
@@ -143,6 +152,10 @@ class WorkingHour(Base):
     id = Column(Integer, primary_key=True)
     courier_id = Column(Integer, ForeignKey("couriers.courier_id"))
     working_hour = Column(Integer, nullable=False)
+
+    @staticmethod
+    def clear_courier_working_hours(courier_id):
+        WorkingHour.query.filter(WorkingHour.courier_id == courier_id).delete()
 
     def __init__(self, courier_id, working_hour):
         self.courier_id = courier_id
@@ -160,8 +173,8 @@ class Order(Base):
     delivered = Column(Boolean, default=False)
     assigned = Column(Boolean, default=False)
 
-    def set_assigned(self):
-        self.assigned = True
+    def set_assigned(self, status=True):
+        self.assigned = status
 
     def set_delivered(self):
         self.delivered = True

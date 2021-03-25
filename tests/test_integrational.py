@@ -19,6 +19,7 @@ def test_add_duplicate_courier(base_url):
 
 @pytest.mark.api
 def test_assign_order(base_url):
+    """Распределение заказа курьеру"""
     courier_id = random.randint(9999, 9999999)
     order_id = random.randint(9999, 9999999)
 
@@ -39,3 +40,9 @@ def test_assign_order(base_url):
     response = requests.post(base_url + "/orders/assign", json={"courier_id": courier_id})
     assert response.status_code == 200, response.text
     assert response.json()["orders"][0]["id"] == order_id
+
+@pytest.mark.api
+def test_assign_wrong_courier_id_order(base_url):
+    """Проверка передачи не существующего id курьера"""
+    response = requests.post(base_url + "/orders/assign", json={"courier_id": "-1"})
+    assert response.status_code == 400, response.text

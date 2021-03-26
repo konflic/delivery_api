@@ -14,9 +14,9 @@ def validate_orders(orders_data):
         try:
             OrderModel(**order)
         except ValidationError as e:
-            broken.append(order)
+            broken.append({"id": order["order_id"], "errors": e.errors()})
     if broken:
-        abort(make_response({"validation_error": {"orders": [{"id": o.get("order_id")} for o in broken]}}, 400))
+        abort(make_response({"validation_error": {"orders": broken}}, 400))
     return orders_data
 
 

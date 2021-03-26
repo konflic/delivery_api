@@ -12,7 +12,7 @@ def validate_complete_data(complete_data: dict):
     try:
         OrderCompleteModel(**complete_data)
     except ValidationError as e:
-        abort(make_response(e.json(), 400))
+        abort(make_response(e.errors(), 400))
     return complete_data
 
 
@@ -32,6 +32,6 @@ class OrderComplete(Resource):
         )
 
         if not order_completed:
-            return {}, 400
+            return {"error": "El problema..."}, 400
         else:
             return {'order_id': order_id}

@@ -14,9 +14,9 @@ def validate_couriers(couriers_data):
         try:
             CourierModel(**courier)
         except ValidationError as e:
-            broken.append(courier)
+            broken.append({"id": courier["courier_id"], "errors": e.errors()})
     if broken:
-        abort(make_response({"validation_error": {"couriers": [{"id": c["courier_id"]} for c in broken]}}, 400))
+        abort(make_response({"validation_error": {"couriers": broken}}, 400))
     return couriers_data
 
 

@@ -3,12 +3,16 @@ import requests
 
 
 def pytest_addoption(parser):
-    parser.addoption("--url", action="store", default=f"http://127.0.0.1:5000")
+    parser.addoption("--url", action="store", default=f"http://127.0.0.1")
+    parser.addoption("--port", action="store", default="8080")
 
 
 @pytest.fixture
 def base_url(request):
-    return request.config.getoption("--url")
+    result = f"{request.config.getoption('--url')}:{request.config.getoption('--port')}"
+    if "http" not in result:
+        raise ValueError(f"Please provide schema [http, https] in url: {result}")
+    return result
 
 
 @pytest.fixture

@@ -24,7 +24,7 @@ python app.py
 
 ```bash
 docker build -t api .
-docker run -p 5000:5000 api -d
+docker run -p 8080:8080 api -d
 ```
 
 ## Тесты

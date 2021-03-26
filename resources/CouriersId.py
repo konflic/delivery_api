@@ -19,7 +19,7 @@ class CouriersId(Resource):
                        "earnings": courier.get_earnings()
                    }, 200
         else:
-            return {}, 404
+            return make_response({"validation_error": "wrong courier_id"}, 400)
 
     def patch(self, courier_id):
         data_to_change = request.json
@@ -28,7 +28,17 @@ class CouriersId(Resource):
         if not all([key in expected_fields for key in data_to_change.keys()]):
             return abort(make_response({"validation_error": "wrong fields"}, 400))
 
+        courier = get_courier(courier_id)
+
+        if not courier:
+            return make_response({"validation_error": "wrong courier_id"}, 400)
+
         courier = update_courier(courier_id, data_to_change)
         update_courier_orders(courier)
 
-        return {'hello': 'test'}
+        return {
+            "courier_id": courier.courier_id,
+            "courier_type": courier.courier_type,
+            "regions": courier.get_regions(),
+            "working_hours": courier.get_working_hours(),
+        }

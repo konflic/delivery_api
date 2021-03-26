@@ -14,12 +14,13 @@ from resources import Status
 from db.database import db_session
 from db.database import init_db
 
-load_dotenv() # Подгружаем переменные окружения
+load_dotenv()  # Подгружаем переменные окружения
 
 app = Flask(__name__)
 api = Api(app)
 
 init_db()
+
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):

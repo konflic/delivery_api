@@ -101,12 +101,19 @@ def update_courier_rating(courier_id, new_rating):
 
 
 def complete_order(courier_id, order_id, delivered_on: datetime):
-    assigned_order = AssignedOrder.query.filter(AssignedOrder.order_id == order_id).first()
+    assigned_order = AssignedOrder.query.filter(
+        AssignedOrder.order_id == order_id and AssignedOrder.courier_id == courier_id
+    ).first()
 
     if assigned_order is None:
         return False
+    last_delivery_time = get_courier(courier_id).last_delivery
 
-    delivery_time = delivered_on - assigned_order.assign_time
+    # Если курьер ничего не доставлял, то расчёт от назначения заказа
+    if last_delivery_time is None:
+        delivery_time = delivered_on - assigned_order.assign_time
+    else:
+        delivery_time = delivered_on - last_delivery_time
 
     db_session.add(
         DeliveredOrder(
@@ -229,7 +236,7 @@ def update_courier(courier_id, fields_to_update):
                 db_session.add(WorkingHour(courier_id=courier_id, working_hour=w_hour))
 
         if field == "courier_type":
-            get_courier(courier_id).courier_type = fields_to_update["field"]
+            get_courier(courier_id).courier_type = fields_to_update[field]
 
     db_session.commit()
     return get_courier(courier_id)
